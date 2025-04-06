@@ -38,5 +38,20 @@ def iris_plot(s=40,c=y,edgecolor='k',title='iris_dataset', save_path='iris_plot.
 
     plt.savefig(save_path)
     print(f"グラフを保存しました: {save_path}")
-    
-iris_plot(s=40, c=y, edgecolor="k", title="Iris dataset")
+
+model = IsolationForest(
+                            n_estimators=100,
+                            max_samples='auto', 
+                            contamination=0.05,
+                            max_features=2, 
+                            bootstrap=False,
+                            n_jobs=-1,
+                            random_state=1
+                        )
+model.fit(X)
+
+df['anomaly_label'] = model.predict(X)
+df['scores'] = model.decision_function(X)
+
+anomaly_df = df[df.anomaly_label==-1]    
+iris_plot(s=40, c=df['anomaly_label'], edgecolor="k", title="Iris dataset", save_path="iris_plot.png")
